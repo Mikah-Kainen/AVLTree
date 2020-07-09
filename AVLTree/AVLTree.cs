@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 
 
@@ -48,6 +49,7 @@ namespace AVLTree
             if(RootNode == null)
             {
                 RootNode = new Node<T>(targetValue);
+                Count++;
                 return;
             }
             Count ++;
@@ -57,7 +59,7 @@ namespace AVLTree
         private void Add(T targetValue, Node<T> currentNode)
         { 
             bool shouldAdd = false;
-            if(targetValue.Value.CompareTo(currentNode.Value) < 0)
+            if(targetValue.CompareTo(currentNode.Value) < 0)
             {
                 if(currentNode.LeftChild != null)
                 {
@@ -70,7 +72,7 @@ namespace AVLTree
             }
             else
             {
-                if(currentNode.LeftChild != null)
+                if(currentNode.RightChild != null)
                 {
                     Add(targetValue, currentNode.RightChild);
                 }
@@ -80,11 +82,11 @@ namespace AVLTree
                 }
             }   
 
-            if(wasFound)
+            if(shouldAdd)
             {
-                if(currentNode.Value.CompareTo(targetValue) < 0)
+                if(targetValue.CompareTo(currentNode.Value) < 0)
                 {
-                    currentNode.leftChild = new Node<T>(targetValue);
+                    currentNode.LeftChild = new Node<T>(targetValue);
                 }
                 else
                 {
@@ -93,15 +95,15 @@ namespace AVLTree
                 shouldAdd = false;
             }
 
-            while(abs(currrentNode.Balance) > 1)
+            while(Math.Abs(currentNode.Balance()) > 1)
             {
                 if(currentNode.Balance() > 1)
                 {
-                    LeftRotation(FindParent(FindParent(currentNode)));
+                    LeftRotation(currentNode);
                 }
                 else if(currentNode.Balance() < 1)
                 {
-                    RightRotation(FindParent(FindParent(currentNode)));
+                    RightRotation(currentNode);
                 }   
             }
         }
@@ -109,35 +111,51 @@ namespace AVLTree
 
         private void LeftRotation(Node<T> targetNode)
         {
-            if(targetNode.RightChild.RightChild == null)
-            {
-                RightRotation(targetNode.RightChild);
-            }
-
             Node<T> parentNode = FindParent(targetNode);
+            Node<T> newHead = targetNode.RightChild;
             Node<T> tempHolder;
 
-            parentNode.RightChild = parentNode.RightChild.RightChild;
-            tempHolder = parentNode.RightChild.LeftChild;
+            if(newHead.RightChild == null && newHead.LeftChild != null)
+            {
+                RightRotation(newHead);
+            }
 
-            parentNode.RightChild.LeftChild = targetNode;
+            if (parentNode != null)
+            {
+                parentNode.RightChild = newHead;
+            }
+            else
+            {
+                RootNode = newHead;
+            }
+            tempHolder = newHead.LeftChild;
+            
+            newHead.LeftChild = targetNode;
             targetNode.RightChild = tempHolder;
         }
 
         private void RightRotation(Node<T> targetNode)
         {
-            if(targetNode.LeftChild.LeftChild == null)
-            {
-                LeftRotation(targetNode.LeftChild);
-            }
-
             Node<T> parentNode = FindParent(targetNode);
+            Node<T> newHead = targetNode.LeftChild;
             Node<T> tempHolder;
 
-            parentNode.LeftChild = parentNode.LeftChild.LeftChild;
-            tempHolder = parentNode.LeftChild.RightChild;
+            if(newHead.LeftChild == null && newHead.RightChild != null)
+            {
+                LeftRotation(newHead);
+            }
 
-            parentNode.LeftChild.RightChild = targetNode;
+            if(parentNode != null)
+            {
+                parentNode.LeftChild = newHead;
+            }
+            else
+            {
+                RootNode = newHead;
+            }
+            tempHolder = newHead.RightChild;
+
+            newHead.RightChild = targetNode;
             targetNode.LeftChild = tempHolder;
         }
     }

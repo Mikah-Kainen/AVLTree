@@ -6,7 +6,14 @@ namespace AVLTree
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            AVLTree<int> tree = new AVLTree<int>();
+
+            tree.Add(5);
+            tree.Add(3);
+            tree.Add(4);
+
+            tree.Add(1);
+            ;
         }
     }
 }
