@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 
@@ -17,7 +18,38 @@ namespace AVLTree
             Count = 0;
         }
 
-        public Node<T> FindParent(Node<T> targetNode)
+        public Node<T> FindParent(T targetValue)
+        {
+            Node<T> previousNode = null;
+            Node<T> currentNode = RootNode;
+
+            while (currentNode != null)
+            {
+                if (currentNode.Value.Equals(targetValue))
+                {
+                    return previousNode;
+                }
+                else if (targetValue.CompareTo(currentNode.Value) > 0)
+                {
+                    previousNode = currentNode;
+                    currentNode = currentNode.RightChild;
+                }
+                else
+                {
+                    previousNode = currentNode;
+                    currentNode = currentNode.LeftChild;
+                }
+            }
+
+            return null;
+        }
+
+        public bool Contains(T targetValue)
+        {
+            
+        }
+
+        private Node<T> FindParent(Node<T> targetNode)
         {
             Node<T> previousNode = null;
             Node<T> currentNode = RootNode;
@@ -118,11 +150,19 @@ namespace AVLTree
             if(newHead.RightChild == null && newHead.LeftChild != null)
             {
                 RightRotation(newHead);
+                newHead = targetNode.RightChild;
             }
 
             if (parentNode != null)
             {
-                parentNode.RightChild = newHead;
+                if (parentNode.RightChild == targetNode)
+                {
+                    parentNode.RightChild = newHead;
+                }
+                else
+                {
+                    parentNode.LeftChild = newHead;
+                }
             }
             else
             {
@@ -143,11 +183,19 @@ namespace AVLTree
             if(newHead.LeftChild == null && newHead.RightChild != null)
             {
                 LeftRotation(newHead);
+                newHead = targetNode.LeftChild;
             }
 
             if(parentNode != null)
             {
-                parentNode.LeftChild = newHead;
+                if (parentNode.LeftChild == targetNode)
+                {
+                    parentNode.LeftChild = newHead;
+                }
+                else
+                {
+                    parentNode.RightChild = newHead;
+                }
             }
             else
             {
@@ -157,6 +205,21 @@ namespace AVLTree
 
             newHead.RightChild = targetNode;
             targetNode.LeftChild = tempHolder;
+        }
+        
+        public bool Remove(T targetValue)
+        {
+            if(RootNode == null)
+            {
+                return false;
+            }
+
+            return Delete();
+        }
+
+        private bool Delete(Node<T> targetNode, Node<T>currentNode)
+        {
+
         }
     }
 }
