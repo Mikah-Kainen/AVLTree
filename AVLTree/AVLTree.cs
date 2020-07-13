@@ -44,9 +44,26 @@ namespace AVLTree
             return null;
         }
 
-        public bool Contains(T targetValue)
+        public Node<T> Find(T targetValue)
         {
-            
+            Node<T> currentNode = RootNode;
+
+            while (currentNode != null)
+            {
+                if(currentNode.Value.Equals(targetValue))
+                {
+                    return currentNode;
+                }
+                else if(currentNode.Value.CompareTo(targetValue) < 0)
+                {
+                    currentNode = currentNode.LeftChild;
+                }
+                else
+                {
+                    currentNode = currentNode.RightChild;
+                }
+            }
+            return null;
         }
 
         private Node<T> FindParent(Node<T> targetNode)
@@ -214,12 +231,65 @@ namespace AVLTree
                 return false;
             }
 
-            return Delete();
+            Node<T> targetNode = Find(targetValue);
+            Node<T> currentNode = RootNode;
+
+            return Delete(targetNode, currentNode);
         }
 
-        private bool Delete(Node<T> targetNode, Node<T>currentNode)
+        private bool Delete(Node<T> targetNode, Node<T> currentNode)
         {
+            if(targetNode == currentNode)
+            {
+                Node<T> parentNode = FindParent(targetNode);
+                Node<T> LeftMax = currentNode.FindReplacement();
 
+                bool isLeftChild = currentNode.IsLessThan(parentNode);
+
+                if (LeftMax != null)
+                {
+                    LeftMax.LeftChild = currentNode.LeftChild;
+                    LeftMax.RightChild = currentNode.RightChild;
+
+                    if (isLeftChild)
+                    {
+                        parentNode.LeftChild = LeftMax;
+                    }
+                    else
+                    {
+                        parentNode.RightChild = LeftMax;
+                    }
+                }
+                else
+                {
+                    if (isLeftChild)
+                    {
+                        parentNode.LeftChild = currentNode.RightChild;
+                    }
+                    else
+                    {
+                        parentNode.RightChild = currentNode.RightChild;
+                    }
+                }
+
+                if (LeftMax != null && currentNode.RightChild != null)
+                {
+                    LeftMax.LeftChild = null;
+                    LeftMax.RightChild = null;
+                    Delete(LeftMax, currentNode);
+                }
+            }
+            else if(currentNode.IsLessThan(targetNode))
+            {
+                Delete(targetNode, currentNode.LeftChild);
+            }
+            else
+            {
+                Delete(targetNode, currentNode.RightChild);
+            }
+
+            // add the balance check
+            return true;
         }
     }
 }

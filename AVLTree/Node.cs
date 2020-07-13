@@ -69,5 +69,20 @@ namespace AVLTree
             }
             return false;
         }
+
+        public Node<T> FindReplacement()
+        {
+            if(LeftChild == null)
+            {
+                return null;
+            }
+            Node<T> currentNode = LeftChild;
+
+            while(currentNode.RightChild != null)
+            {
+                currentNode = currentNode.RightChild;
+            }
+            return currentNode;
+        }
     }
 }
