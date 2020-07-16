@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AVLTree
 {
@@ -15,6 +16,11 @@ namespace AVLTree
 
 
             tree.Remove(4);
+            tree.Remove(8);
+            tree.Remove(5);
+            tree.Remove(2);
+
+            List<int> Tree = tree.InOrder();
             ;
         }
     }

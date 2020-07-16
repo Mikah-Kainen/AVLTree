@@ -56,11 +56,11 @@ namespace AVLTree
                 }
                 else if (currentNode.Value.CompareTo(targetValue) < 0)
                 {
-                    currentNode = currentNode.LeftChild;
+                    currentNode = currentNode.RightChild;
                 }
                 else
                 {
-                    currentNode = currentNode.RightChild;
+                    currentNode = currentNode.LeftChild;
                 }
             }
             return null;
@@ -277,7 +277,7 @@ namespace AVLTree
                 {
                     if (targetNode != RootNode)
                     {
-                        if (targetNode.IsLessThan(parentNode))
+                        if (targetNode.IsLessThan(parentNode) || targetNode.Value.Equals(parentNode.Value))
                         {
                             parentNode.LeftChild = targetNode.RightChild;
                         }
@@ -292,7 +292,7 @@ namespace AVLTree
                     }
                 }
 
-                if (LeftMax != null && currentNode.RightChild != null)
+                if (LeftMax != null)
                 {
                     Delete(LeftMax, currentNode.LeftChild);
                 }
@@ -316,6 +316,83 @@ namespace AVLTree
                 {
                     RightRotation(currentNode);
                 }
+            }
+        }
+
+
+        public List<T> InOrder()
+        {
+            List<T> returnList = new List<T>();
+            InOrder(RootNode);
+
+            return returnList;
+
+            void InOrder(Node<T> startingNode)
+            {
+                if (startingNode.LeftChild != null)
+                {
+                    InOrder(startingNode.LeftChild);
+                }
+                returnList.Add(startingNode.Value);
+                if (startingNode.RightChild != null)
+                {
+                    InOrder(startingNode.RightChild);
+                }
+            }
+        }
+
+        public List<T> PostOrder()
+        {
+            List<T> returnList = new List<T>();
+            PostOrder(RootNode);
+
+            return returnList;
+
+            void PostOrder(Node<T> startingNode)
+            {
+                if(startingNode.LeftChild != null)
+                {
+                    PostOrder(startingNode.LeftChild);
+                }
+                if(startingNode.RightChild != null)
+                {
+                    PostOrder(startingNode.RightChild);
+                }
+                returnList.Add(startingNode.Value);
+            }
+        }
+
+        public List<T> PreOrder()
+        {
+            List<T> returnList = new List<T>();
+            PreOrder(RootNode);
+
+            return returnList;
+
+            void PreOrder(Node<T> startingNode)
+            {
+                returnList.Add(startingNode.Value);
+                if(startingNode.LeftChild != null)
+                {
+                    PreOrder(startingNode.LeftChild);
+                }
+                if(startingNode.RightChild != null)
+                {
+                    PreOrder(startingNode.RightChild);
+                }
+            }
+        }
+
+        public List<T> BreadthFirst()
+        {
+            List<T> returnList = new List<T>();
+            BreadthFirst(RootNode);
+
+            return returnList;
+
+            void BreadthFirst(Node<T> startingNode)
+            {
+
             }
         }
 
