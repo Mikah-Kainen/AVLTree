@@ -12,6 +12,9 @@ namespace AVLTree
             {
                 tree.Add(i);
             }
+
+
+            tree.Remove(4);
             ;
         }
     }

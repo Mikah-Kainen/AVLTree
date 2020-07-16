@@ -12,7 +12,7 @@ namespace AVLTree
         Node<T> RootNode;
         public int Count;
 
-        public AVLTree ()
+        public AVLTree()
         {
             RootNode = null;
             Count = 0;
@@ -50,11 +50,11 @@ namespace AVLTree
 
             while (currentNode != null)
             {
-                if(currentNode.Value.Equals(targetValue))
+                if (currentNode.Value.Equals(targetValue))
                 {
                     return currentNode;
                 }
-                else if(currentNode.Value.CompareTo(targetValue) < 0)
+                else if (currentNode.Value.CompareTo(targetValue) < 0)
                 {
                     currentNode = currentNode.LeftChild;
                 }
@@ -71,13 +71,13 @@ namespace AVLTree
             Node<T> previousNode = null;
             Node<T> currentNode = RootNode;
 
-            while(currentNode != null)
+            while (currentNode != null)
             {
-                if(currentNode.Equals(targetNode))
+                if (currentNode.Equals(targetNode))
                 {
                     return previousNode;
                 }
-                else if(targetNode.Value.CompareTo(currentNode.Value) > 0)
+                else if (targetNode.Value.CompareTo(currentNode.Value) > 0)
                 {
                     previousNode = currentNode;
                     currentNode = currentNode.RightChild;
@@ -95,22 +95,22 @@ namespace AVLTree
 
         public void Add(T targetValue)
         {
-            if(RootNode == null)
+            if (RootNode == null)
             {
                 RootNode = new Node<T>(targetValue);
                 Count++;
                 return;
             }
-            Count ++;
+            Count++;
             Add(targetValue, RootNode);
         }
 
         private void Add(T targetValue, Node<T> currentNode)
-        { 
+        {
             bool shouldAdd = false;
-            if(targetValue.CompareTo(currentNode.Value) < 0)
+            if (targetValue.CompareTo(currentNode.Value) < 0)
             {
-                if(currentNode.LeftChild != null)
+                if (currentNode.LeftChild != null)
                 {
                     Add(targetValue, currentNode.LeftChild);
                 }
@@ -121,7 +121,7 @@ namespace AVLTree
             }
             else
             {
-                if(currentNode.RightChild != null)
+                if (currentNode.RightChild != null)
                 {
                     Add(targetValue, currentNode.RightChild);
                 }
@@ -129,11 +129,11 @@ namespace AVLTree
                 {
                     shouldAdd = true;
                 }
-            }   
+            }
 
-            if(shouldAdd)
+            if (shouldAdd)
             {
-                if(targetValue.CompareTo(currentNode.Value) < 0)
+                if (targetValue.CompareTo(currentNode.Value) < 0)
                 {
                     currentNode.LeftChild = new Node<T>(targetValue);
                 }
@@ -144,19 +144,19 @@ namespace AVLTree
                 shouldAdd = false;
             }
 
-            while(Math.Abs(currentNode.Balance()) > 1)
+            while (Math.Abs(currentNode.Balance()) > 1)
             {
-                if(currentNode.Balance() > 1)
+                if (currentNode.Balance() > 1)
                 {
                     LeftRotation(currentNode);
                 }
-                else if(currentNode.Balance() < 1)
+                else if (currentNode.Balance() < 1)
                 {
                     RightRotation(currentNode);
-                }   
+                }
             }
         }
-    
+
 
         private void LeftRotation(Node<T> targetNode)
         {
@@ -164,7 +164,7 @@ namespace AVLTree
             Node<T> newHead = targetNode.RightChild;
             Node<T> tempHolder;
 
-            if(newHead.RightChild == null && newHead.LeftChild != null)
+            if (newHead.RightChild == null && newHead.LeftChild != null)
             {
                 RightRotation(newHead);
                 newHead = targetNode.RightChild;
@@ -186,7 +186,7 @@ namespace AVLTree
                 RootNode = newHead;
             }
             tempHolder = newHead.LeftChild;
-            
+
             newHead.LeftChild = targetNode;
             targetNode.RightChild = tempHolder;
         }
@@ -197,13 +197,13 @@ namespace AVLTree
             Node<T> newHead = targetNode.LeftChild;
             Node<T> tempHolder;
 
-            if(newHead.LeftChild == null && newHead.RightChild != null)
+            if (newHead.LeftChild == null && newHead.RightChild != null)
             {
                 LeftRotation(newHead);
                 newHead = targetNode.LeftChild;
             }
 
-            if(parentNode != null)
+            if (parentNode != null)
             {
                 if (parentNode.LeftChild == targetNode)
                 {
@@ -223,73 +223,101 @@ namespace AVLTree
             newHead.RightChild = targetNode;
             targetNode.LeftChild = tempHolder;
         }
-        
+
         public bool Remove(T targetValue)
         {
-            if(RootNode == null)
+            if (RootNode == null)
             {
                 return false;
             }
 
             Node<T> targetNode = Find(targetValue);
+            if (targetNode == null)
+            {
+                return false;
+            }
             Node<T> currentNode = RootNode;
 
-            return Delete(targetNode, currentNode);
+            Count--;
+            Delete(targetNode, currentNode);
+            return true;
         }
 
-        private bool Delete(Node<T> targetNode, Node<T> currentNode)
+        private void Delete(Node<T> targetNode, Node<T> currentNode)
         {
-            if(targetNode == currentNode)
+            if (targetNode == currentNode)
             {
+                Node<T> LeftMax = targetNode.FindReplacement();
                 Node<T> parentNode = FindParent(targetNode);
-                Node<T> LeftMax = currentNode.FindReplacement();
-
-                bool isLeftChild = currentNode.IsLessThan(parentNode);
 
                 if (LeftMax != null)
                 {
-                    LeftMax.LeftChild = currentNode.LeftChild;
-                    LeftMax.RightChild = currentNode.RightChild;
+                    Node<T> replacementNode = new Node<T>(LeftMax.Value);
+                    replacementNode.LeftChild = targetNode.LeftChild;
+                    replacementNode.RightChild = targetNode.RightChild;
 
-                    if (isLeftChild)
+                    if (targetNode != RootNode)
                     {
-                        parentNode.LeftChild = LeftMax;
+                        if (targetNode.IsLessThan(parentNode))
+                        {
+                            parentNode.LeftChild = replacementNode;
+                        }
+                        else
+                        {
+                            parentNode.RightChild = replacementNode;
+                        }
                     }
                     else
                     {
-                        parentNode.RightChild = LeftMax;
+                        RootNode = replacementNode;
                     }
+                    currentNode = replacementNode;
                 }
                 else
                 {
-                    if (isLeftChild)
+                    if (targetNode != RootNode)
                     {
-                        parentNode.LeftChild = currentNode.RightChild;
+                        if (targetNode.IsLessThan(parentNode))
+                        {
+                            parentNode.LeftChild = targetNode.RightChild;
+                        }
+                        else
+                        {
+                            parentNode.RightChild = targetNode.RightChild;
+                        }
                     }
                     else
                     {
-                        parentNode.RightChild = currentNode.RightChild;
+                        RootNode = targetNode.RightChild;
                     }
                 }
 
                 if (LeftMax != null && currentNode.RightChild != null)
                 {
-                    LeftMax.LeftChild = null;
-                    LeftMax.RightChild = null;
-                    Delete(LeftMax, currentNode);
+                    Delete(LeftMax, currentNode.LeftChild);
                 }
             }
-            else if(currentNode.IsLessThan(targetNode))
-            {
-                Delete(targetNode, currentNode.LeftChild);
-            }
-            else
+            else if (currentNode.IsLessThan(targetNode))
             {
                 Delete(targetNode, currentNode.RightChild);
             }
+            else
+            {
+                Delete(targetNode, currentNode.LeftChild);
+            }
 
-            // add the balance check
-            return true;
+            while (Math.Abs(currentNode.Balance()) > 1)
+            {
+                if (currentNode.Balance() > 1)
+                {
+                    LeftRotation(currentNode);
+                }
+                else
+                {
+                    RightRotation(currentNode);
+                }
+            }
         }
+
     }
 }
