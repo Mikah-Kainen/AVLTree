@@ -20,7 +20,7 @@ namespace AVLTree
             tree.Remove(5);
             tree.Remove(2);
 
-            List<int> Tree = tree.InOrder();
+            List<int> Tree = tree.BreadthFirst();
             ;
         }
     }

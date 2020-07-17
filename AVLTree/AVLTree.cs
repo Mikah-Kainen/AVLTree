@@ -386,12 +386,26 @@ namespace AVLTree
         public List<T> BreadthFirst()
         {
             List<T> returnList = new List<T>();
+            Queue<Node<T>> nodes = new Queue<Node<T>>();
             BreadthFirst(RootNode);
 
             return returnList;
 
             void BreadthFirst(Node<T> startingNode)
             {
+                returnList.Add(startingNode.Value);
+                if (startingNode.LeftChild != null)
+                {
+                    nodes.Enqueue(startingNode.LeftChild);
+                }
+                if(startingNode.RightChild != null)
+                {
+                    nodes.Enqueue(startingNode.RightChild);
+                }
+                if (nodes.Count > 0)
+                {
+                    BreadthFirst(nodes.Dequeue());
+                }
 
             }
         }
